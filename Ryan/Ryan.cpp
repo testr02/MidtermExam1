@@ -56,29 +56,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
         break;
     case WM_LBUTTONDOWN:
         isMouseLButtonPressed = true;
-        left = LOWORD(lParam);
-        top = HIWORD(lParam);
-        /*startPoint.x = LOWORD(lParam);
-        startPoint.y = HIWORD(lParam);*/
-        return 0;
-    //ddkafjdlkfjask;jfalkdsj
+        startPoint.x = LOWORD(lParam);
+        startPoint.y = HIWORD(lParam);
+        break;
+    
     case WM_LBUTTONUP:
     {
+        
         if (isMouseLButtonPressed && RyanOn) {
-            isMouseLButtonPressed = false;
-            right = LOWORD(lParam);
-            bottom = HIWORD(lParam);
-            InvalidateRect(hWnd, NULL, TRUE);
-            
-        }
-        break;
-        /*if (isMouseLButtonPressed && RyanOn) {
             isMouseLButtonPressed = false;
             endPoint.x = LOWORD(lParam);
             endPoint.y = HIWORD(lParam);
-            InvalidateRect(hWnd, NULL, TRUE);
+            
         }
-        break;*/
+        break;
     }
     
      /*버튼 누르면 작동.*/
@@ -133,9 +124,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
         if (mousePos.x >= drawstart.x && mousePos.x <= drawend.x &&
             mousePos.y >= drawstart.y && mousePos.y <= drawend.y) {
             isMouseInDraw = TRUE; // 드로잉 영역 내에 마우스가 있음
+            SetCursor(LoadCursor(NULL, IDC_CROSS));
         }
         else {
             isMouseInDraw = FALSE; // 드로잉 영역 밖에 마우스가 있음
+            SetCursor(LoadCursor(NULL, IDC_ARROW));
         }
         if (isMouseLButtonPressed)
         {
@@ -167,7 +160,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 
         Rectangle(hdc, left, top, right, bottom);
 
-        HBRUSH whiteBrush = CreateSolidBrush(RGB(255, 240, 200));
+        HBRUSH whiteBrush = CreateSolidBrush(RGB(255, 255, 255));
         SelectObject(hdc, whiteBrush);
         Rectangle(hdc, left + 8, top + 88, right - 8, bottom - 8);
         drawstart.x = left + 8;
@@ -182,7 +175,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
         }
         if (RyanOn && isMouseLButtonPressed) {
             MoveToEx(hdc, startPoint.x, startPoint.y, NULL);
-            LineTo(hdc, endPoint.x, endPoint.y);
+
             int left = startPoint.x;
             int top = startPoint.y;
             int right = endPoint.x;
@@ -191,22 +184,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 
         }
         EndPaint(hWnd, &ps);
-        break;
-    }
-    case WM_SETCURSOR: {
-        POINT pt;
-        GetCursorPos(&pt);
-
-        if (pt.x > startPoint.x && pt.x < endPoint.x &&
-            pt.y > startPoint.y && pt.y < endPoint.y) {
-            // arrow to cross
-            SetCursor(LoadCursor(NULL, IDC_CROSS));
-            return TRUE; // 처리됨을 알림
-        }
-        else { 
-            // cross to arrow
-            SetCursor(LoadCursor(NULL, IDC_ARROW));
-        }
         break;
     }
     case WM_DESTROY:
@@ -239,7 +216,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.hbrBackground = CreateSolidBrush(RGB(255, 240, 200));    //백그라운드 색
     wc.lpszMenuName = NULL;
-    wc.lpszClassName = TEXT("Computer Science");
+    wc.lpszClassName = TEXT("201807058정의찬");
     wc.hIconSm = LoadIcon(wc.hInstance, IDI_APPLICATION);
 
     if (!RegisterClassEx(&wc)) {
@@ -249,6 +226,8 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
     hWnd = CreateWindow(
         wc.lpszClassName, TEXT("201807058정의찬"), WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU,
         0, 0, 800, 480, NULL, NULL, hInstance, NULL);
+
+    
 
     if (!hWnd) {
         return FALSE;
